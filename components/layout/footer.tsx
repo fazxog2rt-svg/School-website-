@@ -8,13 +8,12 @@ import {
   Youtube,
 } from "lucide-react";
 import Link from "next/link";
-import { navLinks, site } from "@/lib/site";
+import { academicLinks, navLinks, site } from "@/lib/site";
 
 const quickLinks = [
   { label: "PPDB Online", href: "/ppdb" },
-  { label: "Berita Terbaru", href: "/berita" },
-  { label: "Prestasi", href: "/prestasi" },
-  { label: "Ekstrakurikuler", href: "/ekstrakurikuler" },
+  { label: "Masuk Portal", href: "/login" },
+  ...academicLinks,
 ];
 
 export function Footer() {

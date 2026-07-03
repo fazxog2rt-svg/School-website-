@@ -1,19 +1,20 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { GraduationCap, Menu, X } from "lucide-react";
+import { ChevronDown, GraduationCap, LogIn, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
 import { ButtonLink } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { CommandPalette } from "@/components/layout/command-palette";
-import { navLinks, site } from "@/lib/site";
+import { academicLinks, navLinks, site } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const [akademik, setAkademik] = React.useState(false);
   const pathname = usePathname();
 
   React.useEffect(() => {
@@ -77,11 +78,57 @@ export function Navbar() {
               </Link>
             );
           })}
+
+          {/* Akademik dropdown */}
+          <div
+            className="relative"
+            onMouseEnter={() => setAkademik(true)}
+            onMouseLeave={() => setAkademik(false)}
+          >
+            <button
+              className={cn(
+                "flex items-center gap-1 rounded-full px-3.5 py-2 text-sm font-medium transition-colors",
+                akademik ? "text-emerald-700 dark:text-emerald-300" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Akademik
+              <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", akademik && "rotate-180")} />
+            </button>
+            <AnimatePresence>
+              {akademik && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  transition={{ duration: 0.15 }}
+                  className="glass-strong absolute left-0 top-full w-56 rounded-2xl p-2 shadow-elevated"
+                >
+                  {academicLinks.map((l) => (
+                    <Link
+                      key={l.href}
+                      href={l.href}
+                      className="block rounded-xl px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+                    >
+                      {l.label}
+                    </Link>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
           <CommandPalette />
           <ThemeToggle />
+          <Link
+            href="/login"
+            className="hidden h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground transition-colors hover:bg-secondary sm:inline-flex"
+            aria-label="Masuk / Portal"
+            title="Masuk / Portal"
+          >
+            <LogIn className="h-[1.15rem] w-[1.15rem]" />
+          </Link>
           <ButtonLink href="/ppdb" size="sm" className="hidden sm:inline-flex">
             PPDB Online
           </ButtonLink>
@@ -105,7 +152,7 @@ export function Navbar() {
             className="glass-strong overflow-hidden border-t lg:hidden"
           >
             <div className="container flex flex-col gap-1 py-4">
-              {navLinks.map((link) => (
+              {[...navLinks, ...academicLinks].map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -114,9 +161,14 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <ButtonLink href="/ppdb" className="mt-2 w-full">
-                Daftar PPDB Online
-              </ButtonLink>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <ButtonLink href="/login" variant="outline" className="w-full">
+                  Masuk Portal
+                </ButtonLink>
+                <ButtonLink href="/ppdb" className="w-full">
+                  PPDB Online
+                </ButtonLink>
+              </div>
               <p className="mt-3 px-4 text-xs text-muted-foreground">
                 {site.address}
               </p>

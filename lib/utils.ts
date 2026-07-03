@@ -14,6 +14,14 @@ export function formatDate(input: string | Date, locale = "id-ID") {
   }).format(date);
 }
 
+export function formatRupiah(amount: number) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(amount);
+}
+
 export function slugify(text: string) {
   return text
     .toString()

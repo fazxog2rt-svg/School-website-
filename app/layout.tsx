@@ -2,12 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
-import { ScrollProgress } from "@/components/layout/scroll-progress";
-import { BackToTop } from "@/components/layout/back-to-top";
-import { WhatsappFab } from "@/components/layout/whatsapp-fab";
-import { AiAssistant } from "@/components/ai/assistant";
+import { AuthProvider } from "@/lib/auth/auth-context";
+import { SiteChrome } from "@/components/layout/site-chrome";
 import { site } from "@/lib/site";
 
 const sans = Plus_Jakarta_Sans({
@@ -73,19 +69,15 @@ export default function RootLayout({
     <html lang="id" suppressHydrationWarning className={`${sans.variable} ${display.variable}`}>
       <body className="min-h-dvh font-sans">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <a
-            href="#main"
-            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-lg focus:bg-emerald-600 focus:px-4 focus:py-2 focus:text-white"
-          >
-            Lompat ke konten utama
-          </a>
-          <ScrollProgress />
-          <Navbar />
-          <main id="main">{children}</main>
-          <Footer />
-          <BackToTop />
-          <WhatsappFab />
-          <AiAssistant />
+          <AuthProvider>
+            <a
+              href="#main"
+              className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-lg focus:bg-emerald-600 focus:px-4 focus:py-2 focus:text-white"
+            >
+              Lompat ke konten utama
+            </a>
+            <SiteChrome>{children}</SiteChrome>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

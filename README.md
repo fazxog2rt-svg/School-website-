@@ -12,7 +12,7 @@ dan Framer Motion.
 
 ## ✨ Fitur Utama
 
-### Sudah tersedia (frontend, production-ready)
+### Halaman Publik
 
 - **Landing page premium** — hero fullscreen (siap video), statistik animated
   counter, visi-misi, sambutan kepala madrasah, preview guru, prestasi, & berita.
@@ -23,28 +23,52 @@ dan Framer Motion.
 - **Berita** — daftar berita dengan _search_, filter, tag, & artikel _featured_.
 - **Ekstrakurikuler** — kartu ekskul lengkap (pembina, jadwal, prestasi) + filter.
 - **Galeri** — masonry gallery dengan _lightbox_ & filter kategori.
+- **Kalender Akademik** — kalender bulanan interaktif, filter jenis agenda,
+  daftar agenda mendatang, tombol export.
+- **Jadwal Pelajaran** — filter per kelas & per hari, unduh PDF.
+- **Pengumuman** — pengumuman tersemat, _countdown_ deadline real-time, lampiran PDF.
+- **Perpustakaan Digital** — pencarian & filter buku, rating, modal detail/sinopsis,
+  riwayat peminjaman.
+- **Alumni** — database alumni dengan _search_, filter angkatan & status, testimoni.
 - **PPDB Online** — formulir multi-langkah dengan _progress bar_, upload dokumen,
   & tampilan nomor pendaftaran + QR (demo).
 - **Kontak** — form kontak, Google Maps embed, & tautan media sosial.
+
+### Portal & Dashboard (RBAC — autentikasi tersimulasi)
+
+Sistem login dengan **peran berbeda** dan dashboard yang menyesuaikan konten:
+
+- **Admin** — statistik & analytics (Recharts), manajemen pengguna, manajemen
+  berita, pengumuman, data nilai, audit/activity log.
+- **Guru** — input nilai, absensi kelas interaktif, jadwal mengajar, materi ajar,
+  tugas & koreksi, forum diskusi.
+- **Siswa** — nilai & grafik perkembangan, jadwal, materi, tugas, forum,
+  rapor & sertifikat digital.
+- **Orang Tua** — monitoring nilai anak, presensi, tagihan/pembayaran, grafik
+  perkembangan, pengumuman.
+
+> **Login demo:** buka **/login**, lalu klik salah satu tombol _"Masuk cepat"_
+> (Super Admin / Guru / Siswa / Orang Tua). Autentikasi masih **disimulasikan**
+> di sisi klien (localStorage) — siap diganti dengan JWT/OAuth + backend nyata.
+
+### UX Premium & Teknis
+
+- Dark mode, Command Palette (`Ctrl/⌘ + K`), scroll progress, back-to-top,
+  floating WhatsApp, skip-link a11y, reduced-motion, custom 404/500, loading screen.
 - **AI Assistant** — chat widget dengan basis pengetahuan sekolah, _voice input_
   (Web Speech API) & _text-to-speech_. Mudah di-upgrade ke LLM sungguhan.
-- **UX premium** — dark mode, Command Palette (`Ctrl/⌘ + K`), scroll progress,
-  back-to-top, floating WhatsApp, skip-link a11y, reduced-motion, custom 404/500,
-  loading screen.
 - **SEO & PWA** — metadata lengkap, Open Graph, `sitemap.xml`, `robots.txt`,
   Web App Manifest, security headers.
 
-### Roadmap (butuh backend & autentikasi)
+### Roadmap (butuh backend nyata)
 
-Fitur berikut disiapkan pada level UI/arsitektur dan menjadi tahap lanjutan
-(memerlukan backend seperti Supabase/Firebase + PostgreSQL, autentikasi, & RBAC):
+Antarmuka & alur sudah lengkap; tahap berikutnya menghubungkan ke backend:
 
-- Dashboard **Admin / Guru / Siswa / Orang Tua** (RBAC, analytics, CRUD, audit log).
-- **E-Learning** (materi, quiz, tugas, nilai, forum) & **Perpustakaan Digital**.
-- **Kalender akademik** interaktif, **jadwal pelajaran** dinamis, **rapor digital**.
-- **CMS berita**, komentar, bookmark, & notifikasi.
-- Autentikasi **JWT/2FA**, rate limiter, backup otomatis, integrasi email/OTP PPDB.
+- Backend **Supabase/Firebase + PostgreSQL** untuk seluruh data & file.
+- Autentikasi **JWT/2FA**, rate limiter, CSRF/XSS protection, backup otomatis,
+  integrasi email/OTP PPDB.
 - **AI Assistant** berbasis LLM (mis. Claude) via route handler `/api/assistant`.
+- Quiz interaktif, komentar/bookmark berita, notifikasi push, payment gateway.
 
 ---
 
@@ -56,6 +80,7 @@ Fitur berikut disiapkan pada level UI/arsitektur dan menjadi tahap lanjutan
 | Bahasa      | TypeScript                                            |
 | Styling     | Tailwind CSS + design tokens (CSS variables)          |
 | Animasi     | Framer Motion                                         |
+| Grafik      | Recharts                                              |
 | Ikon        | Lucide React                                          |
 | Tema        | next-themes (light/dark)                              |
 | Font        | Plus Jakarta Sans (sans) + Fraunces (display)         |
@@ -99,6 +124,13 @@ Butuh Node.js 18.17+ (disarankan 20/22 LTS).
 │   ├── galeri/               # Galeri
 │   ├── ppdb/                 # PPDB online
 │   ├── kontak/               # Kontak
+│   ├── kalender/             # Kalender akademik interaktif
+│   ├── jadwal/               # Jadwal pelajaran
+│   ├── pengumuman/           # Pengumuman + countdown
+│   ├── perpustakaan/         # Perpustakaan digital
+│   ├── alumni/               # Database alumni
+│   ├── login/                # Halaman masuk (RBAC demo)
+│   ├── dashboard/            # Portal: layout + halaman per fitur/peran
 │   ├── manifest.ts           # PWA manifest
 │   ├── sitemap.ts / robots.ts
 │   ├── not-found.tsx / error.tsx / loading.tsx
@@ -106,14 +138,17 @@ Butuh Node.js 18.17+ (disarankan 20/22 LTS).
 ├── components/
 │   ├── ai/                   # AI Assistant widget
 │   ├── cards/                # Kartu guru, prestasi, berita
+│   ├── dashboard/            # Shell, charts (Recharts), UI dashboard, overviews
 │   ├── layout/               # Navbar, footer, command palette, FAB, dll
 │   ├── providers/            # Theme provider
 │   ├── sections/             # Section landing & direktori interaktif
 │   └── ui/                   # Primitif: button, badge, card, counter, reveal
 └── lib/
     ├── site.ts               # Konfigurasi & identitas sekolah
-    ├── utils.ts              # Helper (cn, formatDate, slugify)
+    ├── utils.ts              # Helper (cn, formatDate, formatRupiah, slugify)
     ├── ai-knowledge.ts       # Basis pengetahuan asisten (rule-based)
+    ├── dashboard-nav.ts      # Konfigurasi menu dashboard per peran
+    ├── auth/                 # roles.ts + auth-context.tsx (RBAC tersimulasi)
     └── data/                 # Data konten (mock, siap diganti API)
 ```
 

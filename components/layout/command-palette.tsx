@@ -14,6 +14,13 @@ import {
   Building2,
   GraduationCap,
   Moon,
+  CalendarDays,
+  Clock,
+  Megaphone,
+  BookOpen,
+  Users2,
+  LogIn,
+  LayoutDashboard,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -47,6 +54,13 @@ export function CommandPalette() {
       { label: "Ekstrakurikuler", href: "/ekstrakurikuler", icon: Sparkles, group: "Navigasi" },
       { label: "Galeri", href: "/galeri", icon: ImageIcon, group: "Navigasi" },
       { label: "Kontak", href: "/kontak", icon: Phone, group: "Navigasi" },
+      { label: "Kalender Akademik", href: "/kalender", icon: CalendarDays, group: "Akademik" },
+      { label: "Jadwal Pelajaran", href: "/jadwal", icon: Clock, group: "Akademik" },
+      { label: "Pengumuman", href: "/pengumuman", icon: Megaphone, group: "Akademik" },
+      { label: "Perpustakaan Digital", href: "/perpustakaan", icon: BookOpen, group: "Akademik" },
+      { label: "Alumni", href: "/alumni", icon: Users2, group: "Akademik" },
+      { label: "Masuk / Portal", href: "/login", icon: LogIn, group: "Portal", keywords: "login akun" },
+      { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, group: "Portal" },
       { label: "Daftar PPDB Online", href: "/ppdb", icon: GraduationCap, group: "Aksi", keywords: "pendaftaran daftar" },
       {
         label: "Aktifkan Mode Gelap",

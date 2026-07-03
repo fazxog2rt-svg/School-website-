@@ -33,9 +33,18 @@ export const navLinks = [
   { label: "Guru", href: "/guru" },
   { label: "Prestasi", href: "/prestasi" },
   { label: "Berita", href: "/berita" },
-  { label: "Ekstrakurikuler", href: "/ekstrakurikuler" },
   { label: "Galeri", href: "/galeri" },
   { label: "Kontak", href: "/kontak" },
+];
+
+/** Menu akademik & layanan (dropdown navbar / footer) */
+export const academicLinks = [
+  { label: "Ekstrakurikuler", href: "/ekstrakurikuler" },
+  { label: "Kalender Akademik", href: "/kalender" },
+  { label: "Jadwal Pelajaran", href: "/jadwal" },
+  { label: "Pengumuman", href: "/pengumuman" },
+  { label: "Perpustakaan Digital", href: "/perpustakaan" },
+  { label: "Alumni", href: "/alumni" },
 ];
 
 export type NavLink = (typeof navLinks)[number];
