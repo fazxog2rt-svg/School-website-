@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/layout/page-header";
 import { AcademicCalendar } from "@/components/sections/academic-calendar";
+import { getCalendarEvents } from "@/lib/db";
 
 export const metadata: Metadata = {
   title: "Kalender Akademik",
@@ -8,7 +9,8 @@ export const metadata: Metadata = {
     "Kalender akademik interaktif MTsN 1 Probolinggo — agenda, ujian, libur, dan kegiatan sekolah.",
 };
 
-export default function KalenderPage() {
+export default async function KalenderPage() {
+  const events = await getCalendarEvents();
   return (
     <>
       <PageHeader
@@ -18,7 +20,7 @@ export default function KalenderPage() {
       />
       <section className="section-pad">
         <div className="container">
-          <AcademicCalendar />
+          <AcademicCalendar events={events} />
         </div>
       </section>
     </>

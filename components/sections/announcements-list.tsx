@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Download, FileText, Pin } from "lucide-react";
 import * as React from "react";
-import { announcements, type Announcement } from "@/lib/data/announcements";
+import { announcements as mockAnnouncements, type Announcement } from "@/lib/data/announcements";
 import { Badge } from "@/components/ui/badge";
 import { formatDate, cn } from "@/lib/utils";
 import { toast } from "@/lib/toast";
@@ -59,7 +59,7 @@ function Countdown({ deadline }: { deadline: string }) {
   );
 }
 
-export function AnnouncementsList() {
+export function AnnouncementsList({ announcements = mockAnnouncements }: { announcements?: Announcement[] }) {
   const pinned = announcements.filter((a) => a.pinned);
   const rest = announcements.filter((a) => !a.pinned);
 

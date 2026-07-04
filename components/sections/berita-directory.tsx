@@ -4,10 +4,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Search, Newspaper } from "lucide-react";
 import * as React from "react";
 import { NewsCard } from "@/components/cards/news-card";
-import { news, newsCategories } from "@/lib/data/news";
+import { news as mockNews, newsCategories, type NewsItem } from "@/lib/data/news";
 import { cn } from "@/lib/utils";
 
-export function BeritaDirectory() {
+export function BeritaDirectory({ news = mockNews }: { news?: NewsItem[] }) {
   const [query, setQuery] = React.useState("");
   const [category, setCategory] = React.useState<string>("Semua");
 
@@ -21,7 +21,7 @@ export function BeritaDirectory() {
         n.tags.join(" ").toLowerCase().includes(q);
       return matchCat && matchQuery;
     });
-  }, [query, category]);
+  }, [query, category, news]);
 
   return (
     <div>

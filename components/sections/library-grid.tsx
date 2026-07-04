@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { BookOpen, Download, Search, Star } from "lucide-react";
 import * as React from "react";
-import { books, bookCategories, borrowHistory, type Book } from "@/lib/data/library";
+import { books as mockBooks, bookCategories, borrowHistory, type Book } from "@/lib/data/library";
 import { formatDate, cn } from "@/lib/utils";
 import { toast } from "@/lib/toast";
 
@@ -16,7 +16,7 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
-export function LibraryGrid() {
+export function LibraryGrid({ books = mockBooks }: { books?: Book[] }) {
   const [query, setQuery] = React.useState("");
   const [category, setCategory] = React.useState("Semua");
   const [active, setActive] = React.useState<Book | null>(null);
@@ -28,7 +28,7 @@ export function LibraryGrid() {
       const mC = category === "Semua" || b.category === category;
       return mQ && mC;
     });
-  }, [query, category]);
+  }, [query, category, books]);
 
   return (
     <div className="grid gap-10 lg:grid-cols-[1fr_320px]">

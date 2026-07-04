@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Briefcase, GraduationCap, Quote, Search, Store } from "lucide-react";
 import Image from "next/image";
 import * as React from "react";
-import { alumni, alumniStatuses, alumniYears } from "@/lib/data/alumni";
+import { alumni as mockAlumni, alumniStatuses, alumniYears, type Alumnus } from "@/lib/data/alumni";
 import { cn } from "@/lib/utils";
 
 const statusIcon = {
@@ -13,7 +13,7 @@ const statusIcon = {
   Wirausaha: Store,
 };
 
-export function AlumniDirectory() {
+export function AlumniDirectory({ alumni = mockAlumni }: { alumni?: Alumnus[] }) {
   const [query, setQuery] = React.useState("");
   const [year, setYear] = React.useState("Semua");
   const [status, setStatus] = React.useState<string>("Semua");
@@ -26,7 +26,7 @@ export function AlumniDirectory() {
       const mS = status === "Semua" || a.status === status;
       return mQ && mY && mS;
     });
-  }, [query, year, status]);
+  }, [query, year, status, alumni]);
 
   return (
     <div>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/layout/page-header";
 import { AlumniDirectory } from "@/components/sections/alumni-directory";
+import { getAlumni } from "@/lib/db";
 
 export const metadata: Metadata = {
   title: "Alumni",
@@ -8,7 +9,8 @@ export const metadata: Metadata = {
     "Database alumni MTsN 1 Probolinggo — jejak kiprah lulusan di dunia pendidikan, karier, dan wirausaha.",
 };
 
-export default function AlumniPage() {
+export default async function AlumniPage() {
+  const alumni = await getAlumni();
   return (
     <>
       <PageHeader
@@ -18,7 +20,7 @@ export default function AlumniPage() {
       />
       <section className="section-pad">
         <div className="container">
-          <AlumniDirectory />
+          <AlumniDirectory alumni={alumni} />
         </div>
       </section>
     </>

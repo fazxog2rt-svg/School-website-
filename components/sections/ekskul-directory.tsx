@@ -6,12 +6,13 @@ import * as React from "react";
 import { ButtonLink } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  extracurriculars,
+  extracurriculars as mockEkskul,
   extracurricularCategories,
+  type Extracurricular,
 } from "@/lib/data/extracurriculars";
 import { cn } from "@/lib/utils";
 
-export function EkskulDirectory() {
+export function EkskulDirectory({ extracurriculars = mockEkskul }: { extracurriculars?: Extracurricular[] }) {
   const [category, setCategory] = React.useState<string>("Semua");
 
   const filtered = React.useMemo(
@@ -19,7 +20,7 @@ export function EkskulDirectory() {
       category === "Semua"
         ? extracurriculars
         : extracurriculars.filter((e) => e.category === category),
-    [category]
+    [category, extracurriculars]
   );
 
   return (

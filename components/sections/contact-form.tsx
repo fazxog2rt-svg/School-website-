@@ -4,21 +4,40 @@ import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Send } from "lucide-react";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
+import { getSupabaseBrowser } from "@/lib/supabase/client";
+import { toast } from "@/lib/toast";
 
 export function ContactForm() {
   const [sent, setSent] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const formEl = e.currentTarget;
+    const fd = new FormData(formEl);
     setLoading(true);
-    // Demo: ganti dengan POST ke /api/kontak atau layanan email.
-    setTimeout(() => {
-      setLoading(false);
-      setSent(true);
-      (e.target as HTMLFormElement).reset();
-      setTimeout(() => setSent(false), 5000);
-    }, 900);
+
+    const sb = getSupabaseBrowser();
+    if (sb) {
+      const { error } = await sb.from("contact_messages").insert({
+        name: String(fd.get("name") ?? ""),
+        email: String(fd.get("email") ?? ""),
+        subject: String(fd.get("subject") ?? ""),
+        message: String(fd.get("message") ?? ""),
+      });
+      if (error) {
+        toast("Gagal mengirim pesan: " + error.message, "error");
+        setLoading(false);
+        return;
+      }
+    } else {
+      await new Promise((r) => setTimeout(r, 700));
+    }
+
+    setLoading(false);
+    setSent(true);
+    formEl.reset();
+    setTimeout(() => setSent(false), 5000);
   }
 
   const field =
@@ -31,13 +50,14 @@ export function ContactForm() {
           <label className="mb-1.5 block text-sm font-medium text-foreground">
             Nama Lengkap
           </label>
-          <input required placeholder="Nama Anda" className={field} />
+          <input name="name" required placeholder="Nama Anda" className={field} />
         </div>
         <div>
           <label className="mb-1.5 block text-sm font-medium text-foreground">
             Email
           </label>
           <input
+            name="email"
             required
             type="email"
             placeholder="email@contoh.com"
@@ -49,13 +69,14 @@ export function ContactForm() {
         <label className="mb-1.5 block text-sm font-medium text-foreground">
           Subjek
         </label>
-        <input required placeholder="Perihal pesan" className={field} />
+        <input name="subject" required placeholder="Perihal pesan" className={field} />
       </div>
       <div>
         <label className="mb-1.5 block text-sm font-medium text-foreground">
           Pesan
         </label>
         <textarea
+          name="message"
           required
           rows={5}
           placeholder="Tulis pesan Anda…"

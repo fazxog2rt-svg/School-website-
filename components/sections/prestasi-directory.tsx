@@ -4,10 +4,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { SearchX } from "lucide-react";
 import * as React from "react";
 import { AchievementCard } from "@/components/cards/achievement-card";
-import { achievements, achievementCategories } from "@/lib/data/achievements";
+import { achievements as mockAchievements, achievementCategories, type Achievement } from "@/lib/data/achievements";
 import { cn } from "@/lib/utils";
 
-export function PrestasiDirectory() {
+export function PrestasiDirectory({ achievements = mockAchievements }: { achievements?: Achievement[] }) {
   const [category, setCategory] = React.useState<string>("Semua");
 
   const filtered = React.useMemo(
@@ -15,7 +15,7 @@ export function PrestasiDirectory() {
       category === "Semua"
         ? achievements
         : achievements.filter((a) => a.category === category),
-    [category]
+    [category, achievements]
   );
 
   return (

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/layout/page-header";
 import { BeritaDirectory } from "@/components/sections/berita-directory";
+import { getNews } from "@/lib/db";
 
 export const metadata: Metadata = {
   title: "Berita Sekolah",
@@ -8,7 +9,8 @@ export const metadata: Metadata = {
     "Informasi, kegiatan, dan pengumuman terbaru dari MTsN 1 Probolinggo.",
 };
 
-export default function BeritaPage() {
+export default async function BeritaPage() {
+  const news = await getNews();
   return (
     <>
       <PageHeader
@@ -18,7 +20,7 @@ export default function BeritaPage() {
       />
       <section className="section-pad">
         <div className="container">
-          <BeritaDirectory />
+          <BeritaDirectory news={news} />
         </div>
       </section>
     </>

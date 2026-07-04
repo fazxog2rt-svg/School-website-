@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/layout/page-header";
 import { EkskulDirectory } from "@/components/sections/ekskul-directory";
+import { getExtracurriculars } from "@/lib/db";
 
 export const metadata: Metadata = {
   title: "Ekstrakurikuler",
@@ -8,7 +9,8 @@ export const metadata: Metadata = {
     "Beragam kegiatan ekstrakurikuler untuk mengembangkan bakat, minat, dan karakter siswa MTsN 1 Probolinggo.",
 };
 
-export default function EkskulPage() {
+export default async function EkskulPage() {
+  const items = await getExtracurriculars();
   return (
     <>
       <PageHeader
@@ -18,7 +20,7 @@ export default function EkskulPage() {
       />
       <section className="section-pad">
         <div className="container">
-          <EkskulDirectory />
+          <EkskulDirectory extracurriculars={items} />
         </div>
       </section>
     </>

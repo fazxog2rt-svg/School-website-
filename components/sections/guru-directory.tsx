@@ -4,12 +4,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Search, UserX } from "lucide-react";
 import * as React from "react";
 import { TeacherCard } from "@/components/cards/teacher-card";
-import { teachers, teacherCategories } from "@/lib/data/teachers";
+import { teachers as mockTeachers, teacherCategories, type Teacher } from "@/lib/data/teachers";
 import { cn } from "@/lib/utils";
 
 const PER_PAGE = 8;
 
-export function GuruDirectory() {
+export function GuruDirectory({ teachers = mockTeachers }: { teachers?: Teacher[] }) {
   const [query, setQuery] = React.useState("");
   const [category, setCategory] = React.useState<string>("Semua");
   const [page, setPage] = React.useState(1);
@@ -24,7 +24,7 @@ export function GuruDirectory() {
         t.subject.toLowerCase().includes(q);
       return matchCat && matchQuery;
     });
-  }, [query, category]);
+  }, [query, category, teachers]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
   const current = Math.min(page, totalPages);

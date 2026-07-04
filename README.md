@@ -60,13 +60,26 @@ Sistem login dengan **peran berbeda** dan dashboard yang menyesuaikan konten:
 - **SEO & PWA** — metadata lengkap, Open Graph, `sitemap.xml`, `robots.txt`,
   Web App Manifest, security headers.
 
-### Roadmap (butuh backend nyata)
+### Integrasi Supabase (backend nyata) ✅
 
-Antarmuka & alur sudah lengkap; tahap berikutnya menghubungkan ke backend:
+Website sudah **terhubung ke Supabase** (opsional & aman): bila env diisi,
+data diambil/ditulis ke PostgreSQL + autentikasi asli; bila belum, otomatis
+memakai data contoh sehingga tetap bisa di-deploy.
 
-- Backend **Supabase/Firebase + PostgreSQL** untuk seluruh data & file.
-- Autentikasi **JWT/2FA**, rate limiter, CSRF/XSS protection, backup otomatis,
-  integrasi email/OTP PPDB.
+- **Auth asli** (email + password) dengan RBAC via tabel `profiles`.
+- **Konten publik** (guru, berita, prestasi, pengumuman, ekskul, alumni,
+  perpustakaan, kalender) dibaca dari database.
+- **PPDB** & **Kontak** menyimpan data ke database (`ppdb_registrations`,
+  `contact_messages`).
+- **Row Level Security** aktif — publik hanya baca; tulis butuh peran staf.
+- Skema + seed siap pakai di `supabase/migrations/` & `supabase/seed.sql`.
+
+📘 **Panduan lengkap: lihat [`SUPABASE.md`](./SUPABASE.md).**
+
+### Roadmap lanjutan
+
+- Upload file (PPDB, materi) ke Supabase Storage; CRUD dashboard penuh ke tabel.
+- **2FA**, magic link/OAuth Google, rate limiter, OTP email PPDB.
 - **AI Assistant** berbasis LLM (mis. Claude) via route handler `/api/assistant`.
 - Quiz interaktif, komentar/bookmark berita, notifikasi push, payment gateway.
 

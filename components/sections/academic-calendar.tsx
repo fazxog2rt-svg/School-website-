@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Download } from "lucide-react";
 import * as React from "react";
 import {
-  calendarEvents,
+  calendarEvents as mockCalendar,
   eventTypeColors,
   type CalendarEvent,
 } from "@/lib/data/calendar";
@@ -18,8 +18,13 @@ const monthNames = [
 const dayNames = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
 const types = ["Semua", "Akademik", "Ujian", "Kegiatan", "Libur", "Keagamaan"] as const;
 
-function eventsOnDay(y: number, m: number, d: number): CalendarEvent[] {
-  return calendarEvents.filter((e) => {
+function eventsOnDay(
+  events: CalendarEvent[],
+  y: number,
+  m: number,
+  d: number
+): CalendarEvent[] {
+  return events.filter((e) => {
     const start = new Date(e.date);
     const end = e.endDate ? new Date(e.endDate) : start;
     const day = new Date(y, m, d);
@@ -28,7 +33,7 @@ function eventsOnDay(y: number, m: number, d: number): CalendarEvent[] {
   });
 }
 
-export function AcademicCalendar() {
+export function AcademicCalendar({ events = mockCalendar }: { events?: CalendarEvent[] }) {
   const [cursor, setCursor] = React.useState(new Date(2026, 6, 1));
   const [filter, setFilter] = React.useState<string>("Semua");
 
@@ -42,7 +47,7 @@ export function AcademicCalendar() {
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ];
 
-  const upcoming = calendarEvents
+  const upcoming = events
     .filter((e) => filter === "Semua" || e.type === filter)
     .slice()
     .sort((a, b) => +new Date(a.date) - +new Date(b.date));
@@ -105,7 +110,7 @@ export function AcademicCalendar() {
         <div className="grid grid-cols-7 gap-1">
           {cells.map((day, i) => {
             if (day === null) return <div key={i} />;
-            const dayEvents = eventsOnDay(year, month, day).filter(
+            const dayEvents = eventsOnDay(events, year, month, day).filter(
               (e) => filter === "Semua" || e.type === filter
             );
             return (

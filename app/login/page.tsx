@@ -11,20 +11,25 @@ import { demoUsers, roleLabels } from "@/lib/auth/roles";
 import { cn } from "@/lib/utils";
 
 export default function LoginPage() {
-  const { login, loginAs, user, ready } = useAuth();
+  const { login, loginAs, user, ready, usingSupabase } = useAuth();
   const router = useRouter();
   const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("demo");
   const [error, setError] = React.useState("");
+  const [busy, setBusy] = React.useState(false);
 
   React.useEffect(() => {
     if (ready && user) router.replace("/dashboard");
   }, [ready, user, router]);
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
-    const found = login(email);
-    if (found) router.push("/dashboard");
-    else setError("Email tidak ditemukan. Gunakan salah satu akun demo di samping.");
+    setBusy(true);
+    setError("");
+    const res = await login(email, password);
+    setBusy(false);
+    if (res.ok) router.push("/dashboard");
+    else setError(res.error ?? "Gagal masuk. Periksa email/kata sandi Anda.");
   }
 
   return (
@@ -108,8 +113,9 @@ export default function LoginPage() {
                 <Lock className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <input
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  defaultValue="demo"
                   className="h-11 w-full rounded-xl border border-border bg-card pl-11 pr-4 text-sm outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
@@ -117,47 +123,55 @@ export default function LoginPage() {
             {error && <p className="text-sm text-rose-500">{error}</p>}
             <button
               type="submit"
-              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-emerald-600 font-semibold text-white transition-colors hover:bg-emerald-700"
+              disabled={busy}
+              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-emerald-600 font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-60"
             >
-              Masuk <ArrowRight className="h-4 w-4" />
+              {busy ? "Memproses…" : "Masuk"} <ArrowRight className="h-4 w-4" />
             </button>
           </form>
 
-          {/* Demo quick access */}
-          <div className="mt-8">
-            <div className="flex items-center gap-3">
-              <div className="h-px flex-1 bg-border" />
-              <span className="text-xs text-muted-foreground">
-                Masuk cepat (demo)
-              </span>
-              <div className="h-px flex-1 bg-border" />
+          {/* Demo quick access — hanya mode tanpa Supabase */}
+          {!usingSupabase && (
+            <div className="mt-8">
+              <div className="flex items-center gap-3">
+                <div className="h-px flex-1 bg-border" />
+                <span className="text-xs text-muted-foreground">
+                  Masuk cepat (demo)
+                </span>
+                <div className="h-px flex-1 bg-border" />
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                {demoUsers.map((u) => (
+                  <button
+                    key={u.id}
+                    onClick={() => {
+                      loginAs(u.role);
+                      router.push("/dashboard");
+                    }}
+                    className={cn(
+                      "flex items-center gap-2 rounded-xl border border-border bg-card p-2.5 text-left transition-colors hover:border-emerald-500 hover:bg-secondary"
+                    )}
+                  >
+                    <Image
+                      src={u.avatar}
+                      alt={u.name}
+                      width={32}
+                      height={32}
+                      className="h-8 w-8 rounded-full object-cover"
+                    />
+                    <span className="text-xs font-semibold text-foreground">
+                      {roleLabels[u.role]}
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="mt-4 grid grid-cols-2 gap-2">
-              {demoUsers.map((u) => (
-                <button
-                  key={u.id}
-                  onClick={() => {
-                    loginAs(u.role);
-                    router.push("/dashboard");
-                  }}
-                  className={cn(
-                    "flex items-center gap-2 rounded-xl border border-border bg-card p-2.5 text-left transition-colors hover:border-emerald-500 hover:bg-secondary"
-                  )}
-                >
-                  <Image
-                    src={u.avatar}
-                    alt={u.name}
-                    width={32}
-                    height={32}
-                    className="h-8 w-8 rounded-full object-cover"
-                  />
-                  <span className="text-xs font-semibold text-foreground">
-                    {roleLabels[u.role]}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
+          )}
+          {usingSupabase && (
+            <p className="mt-6 rounded-xl bg-secondary/60 p-3 text-center text-xs text-muted-foreground">
+              Terhubung ke Supabase. Masuk dengan email & kata sandi akun Anda.
+            </p>
+          )}
         </motion.div>
       </div>
     </div>

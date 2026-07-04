@@ -14,6 +14,8 @@ import {
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { toast } from "@/lib/toast";
+import { getSupabaseBrowser } from "@/lib/supabase/client";
 
 const steps = [
   { id: 1, label: "Data Diri", icon: User },
@@ -28,11 +30,55 @@ const labelCls = "mb-1.5 block text-sm font-medium text-foreground";
 
 export function PpdbForm() {
   const [step, setStep] = React.useState(1);
+  const [submitting, setSubmitting] = React.useState(false);
   const [regNumber] = React.useState(
     () => "PPDB-2026-" + Math.floor(1000 + Math.random() * 9000)
   );
+  const formData = React.useRef<Record<string, string>>({});
 
   const progress = ((step - 1) / (steps.length - 1)) * 100;
+
+  function capture(e: React.ChangeEvent<HTMLFormElement>) {
+    const t = e.target as unknown as { name?: string; value?: string };
+    if (t.name) formData.current[t.name] = t.value ?? "";
+  }
+
+  async function handleNext() {
+    if (step < 3) {
+      setStep((s) => s + 1);
+      return;
+    }
+    // Langkah 3 -> kirim pendaftaran
+    setSubmitting(true);
+    const f = formData.current;
+    const sb = getSupabaseBrowser();
+    if (sb) {
+      const { error } = await sb.from("ppdb_registrations").insert({
+        reg_number: regNumber,
+        full_name: f.full_name ?? "",
+        nisn: f.nisn ?? null,
+        birth_place: f.birth_place ?? null,
+        birth_date: f.birth_date || null,
+        gender: f.gender ?? null,
+        prev_school: f.prev_school ?? null,
+        father_name: f.father_name ?? null,
+        mother_name: f.mother_name ?? null,
+        parent_phone: f.parent_phone ?? null,
+        parent_job: f.parent_job ?? null,
+        address: f.address ?? null,
+      });
+      if (error) {
+        toast("Gagal menyimpan pendaftaran: " + error.message, "error");
+        setSubmitting(false);
+        return;
+      }
+      toast("Pendaftaran tersimpan ke database.");
+    } else {
+      toast("Pendaftaran diterima (mode demo — belum tersimpan).", "info");
+    }
+    setSubmitting(false);
+    setStep(4);
+  }
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -75,7 +121,11 @@ export function PpdbForm() {
         </div>
       </div>
 
-      <div className="rounded-3xl border border-border bg-card p-6 shadow-soft md:p-8">
+      <form
+        onChange={capture}
+        onSubmit={(e) => e.preventDefault()}
+        className="rounded-3xl border border-border bg-card p-6 shadow-soft md:p-8"
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
@@ -92,30 +142,30 @@ export function PpdbForm() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label className={labelCls}>Nama Lengkap</label>
-                    <input className={field} placeholder="Nama sesuai akta" />
+                    <input name="full_name" className={field} placeholder="Nama sesuai akta" />
                   </div>
                   <div>
                     <label className={labelCls}>NISN</label>
-                    <input className={field} placeholder="10 digit NISN" />
+                    <input name="nisn" className={field} placeholder="10 digit NISN" />
                   </div>
                   <div>
                     <label className={labelCls}>Tempat Lahir</label>
-                    <input className={field} placeholder="Kota kelahiran" />
+                    <input name="birth_place" className={field} placeholder="Kota kelahiran" />
                   </div>
                   <div>
                     <label className={labelCls}>Tanggal Lahir</label>
-                    <input type="date" className={field} />
+                    <input name="birth_date" type="date" className={field} />
                   </div>
                   <div>
                     <label className={labelCls}>Jenis Kelamin</label>
-                    <select className={field}>
+                    <select name="gender" className={field} defaultValue="Laki-laki">
                       <option>Laki-laki</option>
                       <option>Perempuan</option>
                     </select>
                   </div>
                   <div>
                     <label className={labelCls}>Asal Sekolah (SD/MI)</label>
-                    <input className={field} placeholder="Nama sekolah asal" />
+                    <input name="prev_school" className={field} placeholder="Nama sekolah asal" />
                   </div>
                 </div>
               </div>
@@ -129,23 +179,24 @@ export function PpdbForm() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label className={labelCls}>Nama Ayah</label>
-                    <input className={field} placeholder="Nama ayah" />
+                    <input name="father_name" className={field} placeholder="Nama ayah" />
                   </div>
                   <div>
                     <label className={labelCls}>Nama Ibu</label>
-                    <input className={field} placeholder="Nama ibu" />
+                    <input name="mother_name" className={field} placeholder="Nama ibu" />
                   </div>
                   <div>
                     <label className={labelCls}>No. WhatsApp Aktif</label>
-                    <input className={field} placeholder="08xxxxxxxxxx" />
+                    <input name="parent_phone" className={field} placeholder="08xxxxxxxxxx" />
                   </div>
                   <div>
                     <label className={labelCls}>Pekerjaan Orang Tua</label>
-                    <input className={field} placeholder="Pekerjaan" />
+                    <input name="parent_job" className={field} placeholder="Pekerjaan" />
                   </div>
                   <div className="sm:col-span-2">
                     <label className={labelCls}>Alamat Domisili</label>
                     <textarea
+                      name="address"
                       rows={3}
                       className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring"
                       placeholder="Alamat lengkap"
@@ -251,13 +302,13 @@ export function PpdbForm() {
             >
               <ArrowLeft className="h-4 w-4" /> Kembali
             </Button>
-            <Button onClick={() => setStep((s) => Math.min(4, s + 1))}>
-              {step === 3 ? "Kirim Pendaftaran" : "Lanjut"}
+            <Button type="button" onClick={handleNext} disabled={submitting}>
+              {submitting ? "Mengirim…" : step === 3 ? "Kirim Pendaftaran" : "Lanjut"}
               <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
         )}
-      </div>
+      </form>
     </div>
   );
 }

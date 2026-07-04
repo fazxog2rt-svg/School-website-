@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/layout/page-header";
 import { AnnouncementsList } from "@/components/sections/announcements-list";
+import { getAnnouncements } from "@/lib/db";
 
 export const metadata: Metadata = {
   title: "Pengumuman",
@@ -8,7 +9,8 @@ export const metadata: Metadata = {
     "Pengumuman resmi MTsN 1 Probolinggo — akademik, PPDB, kegiatan, dan informasi penting lainnya.",
 };
 
-export default function PengumumanPage() {
+export default async function PengumumanPage() {
+  const announcements = await getAnnouncements();
   return (
     <>
       <PageHeader
@@ -18,7 +20,7 @@ export default function PengumumanPage() {
       />
       <section className="section-pad">
         <div className="container">
-          <AnnouncementsList />
+          <AnnouncementsList announcements={announcements} />
         </div>
       </section>
     </>

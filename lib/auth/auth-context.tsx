@@ -2,13 +2,18 @@
 
 import * as React from "react";
 import { demoUsers, type DemoUser, type Role } from "@/lib/auth/roles";
+import { getSupabaseBrowser } from "@/lib/supabase/client";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
+
+type LoginResult = { ok: boolean; error?: string };
 
 type AuthState = {
   user: DemoUser | null;
   ready: boolean;
-  login: (email: string) => DemoUser | null;
+  usingSupabase: boolean;
+  login: (email: string, password?: string) => Promise<LoginResult>;
   loginAs: (role: Role) => DemoUser | null;
-  logout: () => void;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = React.createContext<AuthState | null>(null);
@@ -17,18 +22,60 @@ const STORAGE_KEY = "mtsn1-demo-user";
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = React.useState<DemoUser | null>(null);
   const [ready, setReady] = React.useState(false);
+  const sb = getSupabaseBrowser();
+
+  // Bangun profil DemoUser dari sesi Supabase
+  const loadSupabaseUser = React.useCallback(async () => {
+    if (!sb) return null;
+    const { data: sess } = await sb.auth.getUser();
+    const authUser = sess.user;
+    if (!authUser) return null;
+    const { data: profile } = await sb
+      .from("profiles")
+      .select("*")
+      .eq("id", authUser.id)
+      .single();
+    const mapped: DemoUser = {
+      id: authUser.id,
+      name: (profile as any)?.full_name || authUser.email || "Pengguna",
+      email: authUser.email || "",
+      role: ((profile as any)?.role as Role) || "siswa",
+      avatar:
+        (profile as any)?.avatar_url ||
+        `https://i.pravatar.cc/150?u=${authUser.id}`,
+      meta: (profile as any)?.meta || undefined,
+    };
+    return mapped;
+  }, [sb]);
 
   React.useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setUser(JSON.parse(raw));
-    } catch {
-      /* ignore */
-    }
-    setReady(true);
-  }, []);
+    let active = true;
+    (async () => {
+      if (isSupabaseConfigured && sb) {
+        const u = await loadSupabaseUser();
+        if (active) setUser(u);
+        const { data: sub } = sb.auth.onAuthStateChange(async () => {
+          const next = await loadSupabaseUser();
+          if (active) setUser(next);
+        });
+        if (active) setReady(true);
+        return () => sub.subscription.unsubscribe();
+      }
+      // Mode demo (tanpa Supabase)
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw && active) setUser(JSON.parse(raw));
+      } catch {
+        /* ignore */
+      }
+      if (active) setReady(true);
+    })();
+    return () => {
+      active = false;
+    };
+  }, [sb, loadSupabaseUser]);
 
-  const persist = React.useCallback((u: DemoUser | null) => {
+  const persistDemo = React.useCallback((u: DemoUser | null) => {
     setUser(u);
     try {
       if (u) localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
@@ -39,29 +86,58 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = React.useCallback(
-    (email: string) => {
-      const found =
-        demoUsers.find((u) => u.email.toLowerCase() === email.toLowerCase()) ??
-        null;
-      if (found) persist(found);
-      return found;
+    async (email: string, password?: string): Promise<LoginResult> => {
+      if (isSupabaseConfigured && sb) {
+        const { error } = await sb.auth.signInWithPassword({
+          email,
+          password: password ?? "",
+        });
+        if (error) return { ok: false, error: error.message };
+        const u = await loadSupabaseUser();
+        setUser(u);
+        return { ok: true };
+      }
+      // Demo: cocokkan email dengan akun contoh
+      const found = demoUsers.find(
+        (u) => u.email.toLowerCase() === email.toLowerCase()
+      );
+      if (!found) return { ok: false, error: "Email tidak ditemukan." };
+      persistDemo(found);
+      return { ok: true };
     },
-    [persist]
+    [sb, loadSupabaseUser, persistDemo]
   );
 
   const loginAs = React.useCallback(
     (role: Role) => {
+      // Quick-access hanya untuk mode demo
       const found = demoUsers.find((u) => u.role === role) ?? null;
-      if (found) persist(found);
+      if (found) persistDemo(found);
       return found;
     },
-    [persist]
+    [persistDemo]
   );
 
-  const logout = React.useCallback(() => persist(null), [persist]);
+  const logout = React.useCallback(async () => {
+    if (isSupabaseConfigured && sb) {
+      await sb.auth.signOut();
+      setUser(null);
+      return;
+    }
+    persistDemo(null);
+  }, [sb, persistDemo]);
 
   return (
-    <AuthContext.Provider value={{ user, ready, login, loginAs, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        ready,
+        usingSupabase: isSupabaseConfigured,
+        login,
+        loginAs,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
