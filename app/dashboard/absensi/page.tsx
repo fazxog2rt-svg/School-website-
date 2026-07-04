@@ -7,6 +7,7 @@ import { roleGroup } from "@/lib/auth/roles";
 import { DashTitle, Panel } from "@/components/dashboard/ui";
 import { classRoster, attendanceSummary, type StudentAttendance } from "@/lib/data/dashboard";
 import { cn } from "@/lib/utils";
+import { toast } from "@/lib/toast";
 
 const options: StudentAttendance["status"][] = ["Hadir", "Izin", "Sakit", "Alpha"];
 const optionColor: Record<string, string> = {
@@ -22,7 +23,13 @@ function GuruAbsensi() {
     <Panel
       title="Absensi — Kelas 8A"
       action={
-        <button className="inline-flex h-10 items-center gap-2 rounded-full bg-emerald-600 px-5 text-sm font-semibold text-white hover:bg-emerald-700">
+        <button
+          onClick={() => {
+            const hadir = roster.filter((r) => r.status === "Hadir").length;
+            toast(`Absensi tersimpan — ${hadir}/${roster.length} siswa hadir.`);
+          }}
+          className="inline-flex h-10 items-center gap-2 rounded-full bg-emerald-600 px-5 text-sm font-semibold text-white hover:bg-emerald-700"
+        >
           <Save className="h-4 w-4" /> Simpan Absensi
         </button>
       }

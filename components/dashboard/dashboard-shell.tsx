@@ -11,6 +11,7 @@ import { roleLabels } from "@/lib/auth/roles";
 import { getDashboardNav } from "@/lib/dashboard-nav";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
+import { toast } from "@/lib/toast";
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const { user, ready, logout } = useAuth();
@@ -160,7 +161,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             />
           </div>
           <div className="ml-auto flex items-center gap-2">
-            <button className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground hover:bg-secondary">
+            <button
+              onClick={() => toast("Anda memiliki 3 notifikasi baru.", "info")}
+              className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground hover:bg-secondary"
+            >
               <Bell className="h-[18px] w-[18px]" />
               <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-gold-400" />
             </button>

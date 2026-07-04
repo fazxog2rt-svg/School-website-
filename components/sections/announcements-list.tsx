@@ -6,6 +6,7 @@ import * as React from "react";
 import { announcements, type Announcement } from "@/lib/data/announcements";
 import { Badge } from "@/components/ui/badge";
 import { formatDate, cn } from "@/lib/utils";
+import { toast } from "@/lib/toast";
 
 const categoryTone: Record<Announcement["category"], "emerald" | "gold" | "blue" | "muted"> = {
   Akademik: "emerald",
@@ -100,7 +101,10 @@ export function AnnouncementsList() {
                   </div>
                 )}
                 {a.hasPdf && (
-                  <button className="mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-emerald-700">
+                  <button
+                    onClick={() => toast(`Mengunduh lampiran: "${a.title.slice(0, 28)}…"`)}
+                    className="mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-emerald-700"
+                  >
                     <Download className="h-3.5 w-3.5" /> Unduh Lampiran PDF
                   </button>
                 )}
@@ -145,7 +149,11 @@ export function AnnouncementsList() {
                 </p>
               </div>
               {a.hasPdf && (
-                <button className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:bg-secondary">
+                <button
+                  onClick={() => toast(`Mengunduh lampiran: "${a.title.slice(0, 28)}…"`)}
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border text-foreground transition-colors hover:bg-secondary"
+                  aria-label="Unduh lampiran"
+                >
                   <Download className="h-4 w-4" />
                 </button>
               )}

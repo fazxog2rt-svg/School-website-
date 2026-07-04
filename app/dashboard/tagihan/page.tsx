@@ -1,13 +1,21 @@
 "use client";
 
 import { CreditCard, Wallet } from "lucide-react";
+import * as React from "react";
 import { DashTitle, Panel, StatCard, StatusPill } from "@/components/dashboard/ui";
-import { bills } from "@/lib/data/dashboard";
+import { bills as allBills } from "@/lib/data/dashboard";
 import { formatRupiah } from "@/lib/utils";
+import { toast } from "@/lib/toast";
 
 export default function TagihanPage() {
+  const [bills, setBills] = React.useState(allBills);
   const unpaid = bills.filter((b) => !b.paid).reduce((s, b) => s + b.amount, 0);
   const paid = bills.filter((b) => b.paid).reduce((s, b) => s + b.amount, 0);
+
+  function pay(id: string, label: string) {
+    setBills((p) => p.map((b) => (b.id === id ? { ...b, paid: true } : b)));
+    toast(`Pembayaran "${label}" berhasil (demo).`);
+  }
 
   return (
     <>
@@ -43,7 +51,10 @@ export default function TagihanPage() {
                       {b.paid ? (
                         <span className="text-xs text-muted-foreground">—</span>
                       ) : (
-                        <button className="inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700">
+                        <button
+                          onClick={() => pay(b.id, b.label)}
+                          className="inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700"
+                        >
                           <CreditCard className="h-3.5 w-3.5" /> Bayar
                         </button>
                       )}

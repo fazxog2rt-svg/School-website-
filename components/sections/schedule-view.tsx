@@ -5,6 +5,7 @@ import { Clock, Download, User } from "lucide-react";
 import * as React from "react";
 import { classes, days, getSchedule } from "@/lib/data/schedule";
 import { cn } from "@/lib/utils";
+import { toast } from "@/lib/toast";
 
 export function ScheduleView() {
   const [cls, setCls] = React.useState<string>("8A");
@@ -35,8 +36,14 @@ export function ScheduleView() {
             ))}
           </div>
         </div>
-        <button className="inline-flex items-center justify-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary">
-          <Download className="h-4 w-4" /> Unduh PDF
+        <button
+          onClick={() => {
+            toast("Menyiapkan cetakan PDF jadwal…", "info");
+            setTimeout(() => window.print(), 300);
+          }}
+          className="inline-flex items-center justify-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
+        >
+          <Download className="h-4 w-4" /> Unduh / Cetak PDF
         </button>
       </div>
 

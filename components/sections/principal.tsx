@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ButtonLink } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 import { teachers } from "@/lib/data/teachers";
+import { toast } from "@/lib/toast";
 
 export function PrincipalSection() {
   const principal = teachers[0];
@@ -31,7 +32,10 @@ export function PrincipalSection() {
                   </p>
                   <p className="text-sm text-gold-200">Kepala Madrasah</p>
                 </div>
-                <button className="absolute right-4 top-4 flex items-center gap-2 rounded-full bg-white/90 px-3 py-2 text-xs font-semibold text-emerald-800 backdrop-blur transition-transform hover:scale-105">
+                <button
+                  onClick={() => toast("Video sambutan akan segera tersedia.", "info")}
+                  className="absolute right-4 top-4 flex items-center gap-2 rounded-full bg-white/90 px-3 py-2 text-xs font-semibold text-emerald-800 backdrop-blur transition-transform hover:scale-105"
+                >
                   <PlayCircle className="h-4 w-4" />
                   Video Sambutan
                 </button>

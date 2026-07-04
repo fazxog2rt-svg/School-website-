@@ -7,6 +7,7 @@ import { DashTitle, Panel } from "@/components/dashboard/ui";
 import { Badge } from "@/components/ui/badge";
 import { announcements } from "@/lib/data/announcements";
 import { formatDate } from "@/lib/utils";
+import { toast } from "@/lib/toast";
 
 export default function PengumumanDashboardPage() {
   const { user } = useAuth();
@@ -19,7 +20,10 @@ export default function PengumumanDashboardPage() {
         title="Daftar Pengumuman"
         action={
           canManage ? (
-            <button className="inline-flex h-10 items-center gap-2 rounded-full bg-emerald-600 px-5 text-sm font-semibold text-white hover:bg-emerald-700">
+            <button
+              onClick={() => toast("Editor pengumuman akan terhubung ke backend.", "info")}
+              className="inline-flex h-10 items-center gap-2 rounded-full bg-emerald-600 px-5 text-sm font-semibold text-white hover:bg-emerald-700"
+            >
               <Plus className="h-4 w-4" /> Buat Pengumuman
             </button>
           ) : undefined

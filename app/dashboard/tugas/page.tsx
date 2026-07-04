@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth/auth-context";
 import { roleGroup } from "@/lib/auth/roles";
 import { DashTitle, Panel, StatusPill } from "@/components/dashboard/ui";
 import { assignments } from "@/lib/data/elearning";
+import { toast } from "@/lib/toast";
 
 export default function TugasPage() {
   const { user } = useAuth();
@@ -21,7 +22,10 @@ export default function TugasPage() {
         title="Daftar Tugas"
         action={
           isTeacher ? (
-            <button className="inline-flex h-10 items-center gap-2 rounded-full bg-emerald-600 px-5 text-sm font-semibold text-white hover:bg-emerald-700">
+            <button
+              onClick={() => toast("Form buat tugas akan terhubung ke backend.", "info")}
+              className="inline-flex h-10 items-center gap-2 rounded-full bg-emerald-600 px-5 text-sm font-semibold text-white hover:bg-emerald-700"
+            >
               <Plus className="h-4 w-4" /> Buat Tugas
             </button>
           ) : undefined
@@ -42,12 +46,18 @@ export default function TugasPage() {
                 )}
                 <StatusPill status={a.status} />
                 {!isTeacher && a.status !== "Dinilai" && (
-                  <button className="inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700">
+                  <button
+                    onClick={() => toast(`Tugas "${a.title}" dikumpulkan.`)}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700"
+                  >
                     <Upload className="h-3.5 w-3.5" /> Kumpulkan
                   </button>
                 )}
                 {isTeacher && (
-                  <button className="rounded-full border border-border px-4 py-2 text-xs font-semibold text-foreground hover:bg-secondary">
+                  <button
+                    onClick={() => toast(`Membuka koreksi "${a.title}" (demo).`, "info")}
+                    className="rounded-full border border-border px-4 py-2 text-xs font-semibold text-foreground hover:bg-secondary"
+                  >
                     Koreksi
                   </button>
                 )}

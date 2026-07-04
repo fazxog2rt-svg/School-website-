@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { AuthProvider } from "@/lib/auth/auth-context";
 import { SiteChrome } from "@/components/layout/site-chrome";
+import { Toaster } from "@/components/ui/toaster";
 import { site } from "@/lib/site";
 
 const sans = Plus_Jakarta_Sans({
@@ -77,6 +78,7 @@ export default function RootLayout({
               Lompat ke konten utama
             </a>
             <SiteChrome>{children}</SiteChrome>
+            <Toaster />
           </AuthProvider>
         </ThemeProvider>
       </body>

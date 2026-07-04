@@ -9,6 +9,7 @@ import {
   type CalendarEvent,
 } from "@/lib/data/calendar";
 import { cn } from "@/lib/utils";
+import { toast, downloadFile } from "@/lib/toast";
 
 const monthNames = [
   "Januari", "Februari", "Maret", "April", "Mei", "Juni",
@@ -45,6 +46,30 @@ export function AcademicCalendar() {
     .filter((e) => filter === "Semua" || e.type === filter)
     .slice()
     .sort((a, b) => +new Date(a.date) - +new Date(b.date));
+
+  function exportIcs() {
+    const fmt = (d: string) => d.replace(/-/g, "");
+    const lines = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//MTsN 1 Probolinggo//Kalender Akademik//ID",
+      ...upcoming.flatMap((e) => {
+        const end = e.endDate ?? e.date;
+        return [
+          "BEGIN:VEVENT",
+          `UID:${e.id}@mtsn1probolinggo.sch.id`,
+          `DTSTART;VALUE=DATE:${fmt(e.date)}`,
+          `DTEND;VALUE=DATE:${fmt(end)}`,
+          `SUMMARY:${e.title}`,
+          `CATEGORIES:${e.type}`,
+          "END:VEVENT",
+        ];
+      }),
+      "END:VCALENDAR",
+    ];
+    downloadFile("kalender-akademik.ics", lines.join("\r\n"), "text/calendar;charset=utf-8");
+    toast("Kalender diunduh (.ics) — buka di Google Calendar.");
+  }
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.5fr_1fr]">
@@ -136,8 +161,11 @@ export function AcademicCalendar() {
           ))}
         </div>
 
-        <button className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full border border-border bg-card py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-secondary">
-          <Download className="h-4 w-4" /> Export PDF / Google Calendar
+        <button
+          onClick={exportIcs}
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full border border-border bg-card py-2.5 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
+        >
+          <Download className="h-4 w-4" /> Export ke Google Calendar (.ics)
         </button>
 
         <div className="mt-5 space-y-3">

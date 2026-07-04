@@ -3,6 +3,7 @@
 import { Award, Download, FileBadge } from "lucide-react";
 import { DashTitle, Panel } from "@/components/dashboard/ui";
 import { studentGrades } from "@/lib/data/dashboard";
+import { toast, downloadFile } from "@/lib/toast";
 
 const certificates = [
   { title: "Sertifikat Tahfidz Juz 30", date: "Juni 2026" },
@@ -48,8 +49,21 @@ export default function RaporPage() {
               </tbody>
             </table>
           </div>
-          <button className="mt-5 inline-flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700">
-            <Download className="h-4 w-4" /> Unduh Rapor (PDF)
+          <button
+            onClick={() => {
+              const content =
+                "RAPOR — MTsN 1 Probolinggo\nSemester Genap 2025/2026\n\n" +
+                "Mata Pelajaran            KKM   Nilai\n" +
+                studentGrades
+                  .map((g) => `${g.subject.padEnd(24)}  ${g.kkm}    ${g.nilai}`)
+                  .join("\n") +
+                `\n\nRata-rata: ${avg}`;
+              downloadFile("rapor-semester.txt", content);
+              toast("Rapor berhasil diunduh.");
+            }}
+            className="mt-5 inline-flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
+          >
+            <Download className="h-4 w-4" /> Unduh Rapor
           </button>
         </Panel>
 
@@ -64,7 +78,13 @@ export default function RaporPage() {
                   <p className="truncate text-sm font-semibold text-foreground">{c.title}</p>
                   <p className="text-xs text-muted-foreground">{c.date}</p>
                 </div>
-                <Download className="h-4 w-4 text-muted-foreground" />
+                <button
+                  onClick={() => toast(`Mengunduh sertifikat: "${c.title}"`)}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-secondary hover:text-emerald-600"
+                  aria-label="Unduh sertifikat"
+                >
+                  <Download className="h-4 w-4" />
+                </button>
               </li>
             ))}
           </ul>

@@ -1,19 +1,25 @@
 "use client";
 
-import { Plus, Search, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { Plus, Search, Pencil, Trash2 } from "lucide-react";
 import Image from "next/image";
 import * as React from "react";
 import { DashTitle, Panel, StatusPill } from "@/components/dashboard/ui";
 import { managedUsers } from "@/lib/data/dashboard";
-import { cn } from "@/lib/utils";
+import { toast } from "@/lib/toast";
 
 const roles = ["Semua", "Kepala Madrasah", "Guru", "Staff TU", "Operator"];
 
 export default function PenggunaPage() {
   const [query, setQuery] = React.useState("");
   const [role, setRole] = React.useState("Semua");
+  const [users, setUsers] = React.useState(managedUsers);
 
-  const filtered = managedUsers.filter((u) => {
+  function removeUser(id: string, name: string) {
+    setUsers((p) => p.filter((u) => u.id !== id));
+    toast(`Pengguna "${name}" dihapus.`, "info");
+  }
+
+  const filtered = users.filter((u) => {
     const q = query.toLowerCase();
     const mQ = !q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q);
     const mR = role === "Semua" || u.role === role;
@@ -45,7 +51,10 @@ export default function PenggunaPage() {
               ))}
             </select>
           </div>
-          <button className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-emerald-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700">
+          <button
+            onClick={() => toast("Form tambah pengguna akan terhubung ke backend.", "info")}
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-emerald-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
+          >
             <Plus className="h-4 w-4" /> Tambah Pengguna
           </button>
         </div>
@@ -84,10 +93,18 @@ export default function PenggunaPage() {
                   <td className="py-3 text-muted-foreground">{u.lastActive}</td>
                   <td className="py-3">
                     <div className="flex items-center justify-end gap-1">
-                      <button className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-secondary hover:text-emerald-600" aria-label="Edit">
+                      <button
+                        onClick={() => toast(`Mengedit data "${u.name}" (demo).`, "info")}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-secondary hover:text-emerald-600"
+                        aria-label="Edit"
+                      >
                         <Pencil className="h-4 w-4" />
                       </button>
-                      <button className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-500/15" aria-label="Hapus">
+                      <button
+                        onClick={() => removeUser(u.id, u.name)}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-500/15"
+                        aria-label="Hapus"
+                      >
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>

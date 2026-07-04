@@ -7,14 +7,19 @@ import { roleGroup } from "@/lib/auth/roles";
 import { DashTitle, Panel } from "@/components/dashboard/ui";
 import { GradeBars } from "@/components/dashboard/charts";
 import { studentGrades, classRoster } from "@/lib/data/dashboard";
+import { toast, downloadFile } from "@/lib/toast";
 
 function GuruInput() {
   const [scores, setScores] = React.useState<Record<string, string>>({});
+  const filled = Object.values(scores).filter((v) => v !== "").length;
   return (
     <Panel
       title="Input Nilai — Matematika Kelas 8A"
       action={
-        <button className="inline-flex h-10 items-center gap-2 rounded-full bg-emerald-600 px-5 text-sm font-semibold text-white hover:bg-emerald-700">
+        <button
+          onClick={() => toast(`Nilai tersimpan untuk ${filled} siswa.`)}
+          className="inline-flex h-10 items-center gap-2 rounded-full bg-emerald-600 px-5 text-sm font-semibold text-white hover:bg-emerald-700"
+        >
           <Save className="h-4 w-4" /> Simpan
         </button>
       }
@@ -72,7 +77,17 @@ function SiswaView({ owner }: { owner: "siswa" | "orangtua" }) {
               <span className="font-semibold text-emerald-600 dark:text-emerald-400">{g.nilai}</span>
             </div>
           ))}
-          <button className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border py-2.5 text-sm font-semibold text-foreground hover:bg-secondary">
+          <button
+            onClick={() => {
+              const csv =
+                "Mata Pelajaran,KKM,Nilai\n" +
+                studentGrades.map((g) => `${g.subject},${g.kkm},${g.nilai}`).join("\n") +
+                `\nRata-rata,,${avg}`;
+              downloadFile("rekap-nilai.csv", csv, "text/csv;charset=utf-8");
+              toast("Rekap nilai berhasil diunduh.");
+            }}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-border py-2.5 text-sm font-semibold text-foreground hover:bg-secondary"
+          >
             <Download className="h-4 w-4" /> Unduh Rekap Nilai
           </button>
         </div>

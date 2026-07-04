@@ -5,6 +5,7 @@ import { BookOpen, Download, Search, Star } from "lucide-react";
 import * as React from "react";
 import { books, bookCategories, borrowHistory, type Book } from "@/lib/data/library";
 import { formatDate, cn } from "@/lib/utils";
+import { toast } from "@/lib/toast";
 
 function Stars({ rating }: { rating: number }) {
   return (
@@ -179,6 +180,10 @@ export function LibraryGrid() {
               </p>
               <button
                 disabled={!active.available}
+                onClick={() => {
+                  toast(`"${active.title}" berhasil dipinjam (demo).`);
+                  setActive(null);
+                }}
                 className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-50"
               >
                 <Download className="h-4 w-4" />

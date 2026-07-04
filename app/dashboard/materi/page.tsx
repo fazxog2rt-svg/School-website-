@@ -6,6 +6,7 @@ import { roleGroup } from "@/lib/auth/roles";
 import { DashTitle, Panel } from "@/components/dashboard/ui";
 import { materials } from "@/lib/data/elearning";
 import { formatDate } from "@/lib/utils";
+import { toast } from "@/lib/toast";
 
 const typeIcon = { PDF: FileText, Video: Film, Slide: Presentation };
 const typeColor = {
@@ -24,7 +25,10 @@ export default function MateriPage() {
       <Panel
         action={
           canUpload ? (
-            <button className="inline-flex h-10 items-center gap-2 rounded-full bg-emerald-600 px-5 text-sm font-semibold text-white hover:bg-emerald-700">
+            <button
+              onClick={() => toast("Pengunggahan materi memerlukan penyimpanan backend.", "info")}
+              className="inline-flex h-10 items-center gap-2 rounded-full bg-emerald-600 px-5 text-sm font-semibold text-white hover:bg-emerald-700"
+            >
               <Upload className="h-4 w-4" /> Unggah Materi
             </button>
           ) : undefined
@@ -46,7 +50,11 @@ export default function MateriPage() {
                   </p>
                   <p className="text-xs text-muted-foreground">{formatDate(m.date)}</p>
                 </div>
-                <button className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border text-foreground hover:bg-secondary" aria-label="Unduh">
+                <button
+                  onClick={() => toast(`Mengunduh "${m.title}"…`)}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border text-foreground hover:bg-secondary"
+                  aria-label="Unduh"
+                >
                   <Download className="h-4 w-4" />
                 </button>
               </div>

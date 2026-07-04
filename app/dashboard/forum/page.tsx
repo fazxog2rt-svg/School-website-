@@ -4,6 +4,7 @@ import { MessagesSquare, Plus } from "lucide-react";
 import Image from "next/image";
 import { DashTitle, Panel } from "@/components/dashboard/ui";
 import { forumThreads } from "@/lib/data/elearning";
+import { toast } from "@/lib/toast";
 
 export default function ForumPage() {
   return (
@@ -12,14 +13,21 @@ export default function ForumPage() {
       <Panel
         title="Topik Diskusi"
         action={
-          <button className="inline-flex h-10 items-center gap-2 rounded-full bg-emerald-600 px-5 text-sm font-semibold text-white hover:bg-emerald-700">
+          <button
+            onClick={() => toast("Editor topik diskusi akan terhubung ke backend.", "info")}
+            className="inline-flex h-10 items-center gap-2 rounded-full bg-emerald-600 px-5 text-sm font-semibold text-white hover:bg-emerald-700"
+          >
             <Plus className="h-4 w-4" /> Buat Topik
           </button>
         }
       >
         <ul className="space-y-3">
           {forumThreads.map((t) => (
-            <li key={t.id} className="flex gap-4 rounded-2xl border border-border p-4 transition-colors hover:bg-secondary/50">
+            <li
+              key={t.id}
+              onClick={() => toast(`Membuka diskusi: "${t.title}"`, "info")}
+              className="flex cursor-pointer gap-4 rounded-2xl border border-border p-4 transition-colors hover:bg-secondary/50"
+            >
               <Image src={t.avatar} alt={t.author} width={44} height={44} className="h-11 w-11 rounded-full object-cover" />
               <div className="flex-1">
                 <p className="font-semibold text-foreground">{t.title}</p>
