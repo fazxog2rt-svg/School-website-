@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a0d16"/>
+      <stop offset="1" stop-color="#111528"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7c5cff"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.3" cy="0.2" r="0.8">
+      <stop offset="0" stop-color="#7c5cff" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#7c5cff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <g transform="translate(90 90)">
+    <rect width="64" height="64" rx="16" fill="url(#brand)"/>
+    <path d="M18 44a8 8 0 0 1-1-15.9A11 11 0 0 1 40 22a8 8 0 0 1 5.6 14" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M32 30v14m0 0-4.4-4.4M32 44l4.4-4.4" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="82" y="42" font-family="Inter, sans-serif" font-size="34" font-weight="700" fill="#fff">Nimbus</text>
+  </g>
+  <text x="90" y="320" font-family="Inter, sans-serif" font-size="72" font-weight="700" fill="#fff">Hosting Bot Premium</text>
+  <text x="90" y="405" font-family="Inter, sans-serif" font-size="72" font-weight="700" fill="url(#brand)">Mulai Rp5.000/bulan</text>
+  <text x="90" y="470" font-family="Inter, sans-serif" font-size="30" fill="#9aa3b8">Node.js &amp; Python · Uptime 99.9% · Online 24 jam</text>
+  <g transform="translate(90 520)" font-family="Inter, sans-serif" font-size="24" fill="#c7cdda">
+    <rect x="0" y="0" width="190" height="50" rx="25" fill="#ffffff10" stroke="#ffffff22"/>
+    <text x="28" y="32">Discord Bot</text>
+    <rect x="210" y="0" width="210" height="50" rx="25" fill="#ffffff10" stroke="#ffffff22"/>
+    <text x="238" y="32">WhatsApp Bot</text>
+    <rect x="440" y="0" width="200" height="50" rx="25" fill="#ffffff10" stroke="#ffffff22"/>
+    <text x="468" y="32">Telegram Bot</text>
+  </g>
+</svg>
